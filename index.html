@@ -228,6 +228,104 @@
         /* SCROLL TOP */
         #scrollTop{position:fixed;bottom:24px;right:24px;width:42px;height:42px;background:var(--primary-red);color:white;border:none;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:1rem;z-index:999;transition:0.3s;box-shadow:0 4px 15px rgba(255,0,0,0.4);}
         #scrollTop:hover{background:var(--dark-red);transform:translateY(-3px);}
+
+        /* ===================== TESTIMONI PAGE ===================== */
+        .testi-page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .testi-full-card {
+            background: var(--card-bg);
+            border: 1px solid #222;
+            border-radius: 14px;
+            overflow: hidden;
+            transition: 0.3s;
+            animation: fadeInUp 0.5s ease backwards;
+        }
+        .testi-full-card:hover { border-color: #333; transform: translateY(-4px); }
+
+        /* Bukti foto */
+        .bukti-img-wrap {
+            width: 100%; height: 200px; overflow: hidden;
+            background: #1a1a1a; position: relative; cursor: pointer;
+        }
+        .bukti-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s; display: block; }
+        .bukti-img-wrap:hover img { transform: scale(1.05); }
+        .bukti-overlay {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: 0.3s;
+        }
+        .bukti-img-wrap:hover .bukti-overlay { opacity: 1; }
+        .bukti-overlay i { font-size: 2rem; color: white; }
+
+        /* Detail transaksi */
+        .transaksi-info {
+            padding: 16px;
+            border-bottom: 1px solid #1e1e1e;
+            background: #0d0d0d;
+            font-size: 0.8rem;
+        }
+        .transaksi-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .transaksi-label { color: var(--text-gray); }
+        .transaksi-val { font-weight: 600; color: white; }
+        .transaksi-val.lunas { color: var(--status-green); }
+
+        /* Ulasan bagian bawah card */
+        .testi-full-body { padding: 18px; }
+
+        /* Lightbox */
+        .lightbox {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.95); z-index: 9999;
+            align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .lightbox.open { display: flex; }
+        .lightbox img { max-width: 100%; max-height: 90vh; border-radius: 8px; object-fit: contain; }
+        .lightbox-close {
+            position: fixed; top: 20px; right: 20px;
+            width: 40px; height: 40px; background: var(--primary-red);
+            border: none; border-radius: 50%; color: white; font-size: 1.2rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Admin panel */
+        .admin-toggle {
+            display: flex; align-items: center; gap: 8px;
+            background: #1a1a1a; border: 1px solid #333;
+            color: var(--text-gray); padding: 8px 16px;
+            border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+            font-family: 'DM Sans', sans-serif; transition: 0.3s; margin-bottom: 20px;
+        }
+        .admin-toggle:hover { border-color: var(--primary-red); color: white; }
+        .admin-panel {
+            background: var(--card-bg); border: 1px solid var(--dark-red);
+            border-radius: 12px; padding: 24px; margin-bottom: 30px;
+            display: none; animation: fadeIn 0.3s ease;
+        }
+        .admin-panel.open { display: block; }
+        .admin-panel h3 { font-family: 'Syne', sans-serif; margin-bottom: 6px; font-size: 1rem; color: var(--primary-red); }
+        .admin-panel p { color: var(--text-gray); font-size: 0.82rem; margin-bottom: 18px; }
+        .admin-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .img-upload-label {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 11px; border: 1px dashed #444; border-radius: 6px;
+            color: var(--text-gray); cursor: pointer; transition: 0.3s; font-size: 0.9rem;
+            background: #1a1a1a; margin-bottom: 10px;
+        }
+        .img-upload-label:hover { border-color: var(--primary-red); color: white; }
+        #img-preview { width: 100%; border-radius: 6px; margin-bottom: 10px; display: none; max-height: 180px; object-fit: cover; }
+        .pin-row { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; }
+        .pin-row input { flex: 1; }
+        .pin-hint { font-size: 0.75rem; color: #555; }
+
+        @media(max-width: 768px) {
+            .testi-page-grid { grid-template-columns: 1fr; }
+            .admin-form-grid { grid-template-columns: 1fr; }
+        }
         #scrollTop.visible{display:flex;}
 
         footer{text-align:center;padding:40px 5%;background:#000;color:#555;font-size:0.85rem;}
@@ -266,6 +364,7 @@
     <div class="logo" onclick="showHome()">RAFEL STUDIO</div>
     <div class="nav-links">
         <a href="javascript:void(0)" onclick="showCatalog()"><i class="fas fa-th-large"></i> Katalog</a>
+        <a href="javascript:void(0)" onclick="showTestimoni()"><i class="fas fa-star"></i> Testimoni</a>
         <a href="https://pratamamoriski-cyber.github.io/Fell/" target="_blank"><i class="fas fa-briefcase"></i> Portofolio</a>
         <a href="https://wa.me/6283169495614" target="_blank" style="background:#25d366;padding:7px 14px;border-radius:6px;font-weight:600;">
             <i class="fab fa-whatsapp"></i> WhatsApp
@@ -278,6 +377,7 @@
 
 <div class="mobile-menu" id="mobileMenu">
     <a href="javascript:void(0)" onclick="showCatalog();closeMenu()"><i class="fas fa-th-large"></i> Lihat Katalog</a>
+    <a href="javascript:void(0)" onclick="showTestimoni();closeMenu()"><i class="fas fa-star"></i> Testimoni & Bukti</a>
     <a href="https://pratamamoriski-cyber.github.io/Fell/" target="_blank"><i class="fas fa-briefcase"></i> Portofolio</a>
     <a href="https://wa.me/6283169495614" target="_blank"><i class="fab fa-whatsapp"></i> Chat WhatsApp</a>
     <a href="mailto:ficrynurul@gmail.com"><i class="fas fa-envelope"></i> Email Kami</a>
@@ -347,10 +447,10 @@
                     </div>
                 </div>
                 <div class="porto-card">
-                    <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600" alt="Video Edit">
+                    <img src="https://i.ibb.co/G3dY3Y6N/Screenshot-20260508-183822.png" alt="Video Edit" onerror="this.src='https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600'">
                     <div class="porto-overlay">
                         <span class="porto-label">Video Editor</span>
-                        <span class="porto-title">Cinematic Promo Video</span>
+                        <span class="porto-title">JJ Edit — Smooth Transition</span>
                         <a href="https://pratamamoriski-cyber.github.io/Fell/" target="_blank" class="porto-cta">Lihat Detail →</a>
                     </div>
                 </div>
@@ -436,6 +536,87 @@
                 <div class="contact-item"><i class="fab fa-whatsapp"></i><a href="https://wa.me/6283169495614" style="color:#25d366;text-decoration:none;">+62 831-6949-5614</a></div>
                 <p class="contact-note">Dekat Lapangan Sepakbola Maswati & Masjid Jamie Al Jihad.</p>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- TESTIMONI PAGE -->
+<div id="testimoni-view" class="container fade-view" style="display:none;">
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <button class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+        <img id="lightbox-img" src="" alt="Bukti Transaksi">
+    </div>
+
+    <div class="section-header">
+        <h2>TESTIMONI & BUKTI TRANSAKSI</h2>
+        <a href="javascript:void(0)" onclick="showHome()" style="color:var(--text-gray);text-decoration:none;font-weight:700;font-size:0.85rem;white-space:nowrap;"><i class="fas fa-arrow-left"></i> KEMBALI</a>
+    </div>
+
+    <!-- Rating Summary -->
+    <div class="rating-summary" id="ts-rating-summary" style="display:none;margin-bottom:24px;">
+        <div class="rating-big">
+            <div class="num" id="ts-avg-score">0</div>
+            <div class="stars" id="ts-avg-stars">☆☆☆☆☆</div>
+            <div class="total" id="ts-total-reviews">0 ulasan</div>
+        </div>
+        <div class="rating-bars" id="ts-bar-chart"></div>
+    </div>
+
+    <!-- Admin Toggle -->
+    <button class="admin-toggle" onclick="toggleAdmin()">
+        <i class="fas fa-lock"></i> Mode Admin — Tambah Bukti Transaksi
+    </button>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="admin-panel">
+        <h3><i class="fas fa-shield-alt"></i> Panel Admin</h3>
+        <p>Upload bukti transaksi + ulasan klien. Hanya lo yang bisa akses ini.</p>
+
+        <div class="pin-row">
+            <input type="password" class="form-input" id="admin-pin" placeholder="Masukkan PIN admin">
+            <span class="pin-hint">Default: 1234</span>
+        </div>
+
+        <div class="admin-form-grid">
+            <input type="text" class="form-input" id="admin-name" placeholder="Nama customer *">
+            <input type="text" class="form-input" id="admin-role" placeholder="Pekerjaan / deskripsi">
+        </div>
+        <div class="admin-form-grid">
+            <select class="service-select" id="admin-service" style="margin-bottom:0;">
+                <option value="">Jasa yang dipesan *</option>
+                <option value="Landing Page">Landing Page</option>
+                <option value="Logo Design">Logo Design</option>
+                <option value="Video Edit">Video Edit</option>
+                <option value="E-Commerce">Website E-Commerce</option>
+            </select>
+            <input type="text" class="form-input" id="admin-total" placeholder="Total bayar (cth: Rp 20.000)">
+        </div>
+
+        <div class="admin-form-grid" style="margin-top:10px;">
+            <input type="text" class="form-input" id="admin-metode" placeholder="Metode bayar (DANA/OVO/dll)">
+            <input type="text" class="form-input" id="admin-tanggal" placeholder="Tanggal (cth: 8 Mei 2026)">
+        </div>
+
+        <textarea class="form-input" id="admin-review" placeholder="Ulasan / komentar klien (opsional)" style="margin-top:10px;min-height:70px;"></textarea>
+
+        <label class="img-upload-label" for="bukti-upload" style="margin-top:10px;">
+            <i class="fas fa-image"></i> Klik untuk upload foto bukti transaksi
+        </label>
+        <input type="file" id="bukti-upload" accept="image/*" style="display:none;" onchange="previewBukti(this)">
+        <img id="img-preview" src="" alt="Preview">
+
+        <button class="submit-btn" id="admin-submit-btn" onclick="submitAdmin()">
+            <i class="fas fa-upload"></i> Upload Testimoni
+        </button>
+    </div>
+
+    <!-- List Testimoni -->
+    <div id="ts-reviews-container">
+        <div class="loading-reviews">
+            <div class="spinner"></div>
+            <p>Memuat testimoni...</p>
         </div>
     </div>
 </div>
@@ -639,7 +820,171 @@
         setTimeout(() => t.classList.remove('show'), 3500);
     }
 
-    loadReviews();
+    // ---- Testimoni Page ----
+    window.loadTestimoniPage = async function() {
+        try {
+            const q = query(collection(db, "reviews"), orderBy("timestamp", "desc"));
+            const snap = await getDocs(q);
+            const reviews = [];
+            snap.forEach(doc => reviews.push({ id: doc.id, ...doc.data() }));
+            renderTestimoniPage(reviews);
+            renderTsSummary(reviews);
+        } catch(e) {
+            document.getElementById('ts-reviews-container').innerHTML =
+                `<div class="no-reviews"><i class="fas fa-exclamation-circle" style="color:var(--primary-red);font-size:1.5rem;display:block;margin-bottom:8px;"></i>Gagal memuat.</div>`;
+        }
+    }
+
+    function renderTsSummary(reviews) {
+        if (reviews.length === 0) return;
+        const total = reviews.length;
+        const avg = reviews.reduce((s,r) => s + r.rating, 0) / total;
+        document.getElementById('ts-avg-score').innerText = (Math.round(avg*10)/10).toFixed(1);
+        document.getElementById('ts-avg-stars').innerText = '★'.repeat(Math.round(avg)) + '☆'.repeat(5-Math.round(avg));
+        document.getElementById('ts-total-reviews').innerText = total + ' ulasan';
+        document.getElementById('ts-rating-summary').style.display = 'flex';
+        let bars = '';
+        for(let i=5;i>=1;i--){
+            const count = reviews.filter(r=>r.rating===i).length;
+            const pct = (count/total*100);
+            bars += `<div class="bar-row"><span class="bar-label">${i}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><span class="bar-count">${count}</span></div>`;
+        }
+        document.getElementById('ts-bar-chart').innerHTML = bars;
+    }
+
+    function renderTestimoniPage(reviews) {
+        const container = document.getElementById('ts-reviews-container');
+        if (reviews.length === 0) {
+            container.innerHTML = `<div class="no-reviews"><i class="fas fa-comment-slash" style="font-size:2rem;display:block;margin-bottom:10px;"></i>Belum ada testimoni.</div>`;
+            return;
+        }
+        const cards = reviews.map(r => {
+            const initials = r.name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+            const stars = '★'.repeat(r.rating)+'☆'.repeat(5-r.rating);
+            const date = r.timestamp?.toDate ? r.timestamp.toDate().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) : '';
+            const buktiHtml = r.buktiUrl ? `
+                <div class="bukti-img-wrap" onclick="openLightbox('${r.buktiUrl}')">
+                    <img src="${r.buktiUrl}" alt="Bukti Transaksi" loading="lazy">
+                    <div class="bukti-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>` : '';
+            const transaksiHtml = (r.total || r.metode || r.tanggal) ? `
+                <div class="transaksi-info">
+                    ${r.tanggal ? `<div class="transaksi-row"><span class="transaksi-label">Tanggal</span><span class="transaksi-val">${r.tanggal}</span></div>` : ''}
+                    ${r.service ? `<div class="transaksi-row"><span class="transaksi-label">Jasa</span><span class="transaksi-val">${r.service}</span></div>` : ''}
+                    ${r.total ? `<div class="transaksi-row"><span class="transaksi-label">Total</span><span class="transaksi-val">${r.total}</span></div>` : ''}
+                    ${r.metode ? `<div class="transaksi-row"><span class="transaksi-label">Pembayaran</span><span class="transaksi-val">${r.metode}</span></div>` : ''}
+                    <div class="transaksi-row"><span class="transaksi-label">Status</span><span class="transaksi-val lunas">✅ LUNAS</span></div>
+                </div>` : '';
+            return `<div class="testi-full-card">
+                ${buktiHtml}
+                ${transaksiHtml}
+                <div class="testi-full-body">
+                    <span class="testi-service" style="position:static;display:inline-block;margin-bottom:10px;">${r.service||'-'}</span>
+                    <div class="testi-quote">"</div>
+                    <p class="testi-text">${r.review || 'Klien puas dengan hasilnya!'}</p>
+                    <div class="testi-stars">${stars}</div>
+                    <div class="testi-author">
+                        <div class="testi-avatar">${initials}</div>
+                        <div>
+                            <div class="testi-name">${r.name}</div>
+                            <div class="testi-role">${r.role||'Klien Rafel Studio'}</div>
+                            <div class="testi-date">${date}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+        container.innerHTML = `<div class="testi-page-grid">${cards}</div>`;
+    }
+
+    // Admin submit
+    window.submitAdmin = async function() {
+        const pin = document.getElementById('admin-pin').value;
+        if (pin !== '200813') return showToast('PIN salah!', true);
+
+        const name = document.getElementById('admin-name').value.trim();
+        const role = document.getElementById('admin-role').value.trim();
+        const service = document.getElementById('admin-service').value;
+        const total = document.getElementById('admin-total').value.trim();
+        const metode = document.getElementById('admin-metode').value.trim();
+        const tanggal = document.getElementById('admin-tanggal').value.trim();
+        const review = document.getElementById('admin-review').value.trim();
+
+        if (!name || !service) return showToast('Nama & jasa wajib diisi!', true);
+
+        const btn = document.getElementById('admin-submit-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengupload...';
+
+        // Handle gambar — convert ke base64 lalu simpan di Firestore
+        let buktiUrl = '';
+        const fileInput = document.getElementById('bukti-upload');
+        if (fileInput.files[0]) {
+            buktiUrl = await new Promise((res) => {
+                const reader = new FileReader();
+                reader.onload = e => res(e.target.result);
+                reader.readAsDataURL(fileInput.files[0]);
+            });
+        }
+
+        try {
+            await addDoc(collection(db, "reviews"), {
+                name, role, service, total, metode, tanggal,
+                review: review || 'Klien puas dengan hasilnya!',
+                rating: 5,
+                buktiUrl,
+                timestamp: serverTimestamp(),
+                isAdmin: true
+            });
+            showToast('✅ Testimoni berhasil diupload!');
+            // Reset form
+            ['admin-name','admin-role','admin-total','admin-metode','admin-tanggal','admin-review','admin-pin'].forEach(id => document.getElementById(id).value='');
+            document.getElementById('admin-service').value='';
+            document.getElementById('img-preview').style.display='none';
+            fileInput.value='';
+            loadTestimoniPage();
+            loadReviews();
+        } catch(e) {
+            showToast('Gagal upload, coba lagi.', true);
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-upload"></i> Upload Testimoni';
+    };
+
+    window.previewBukti = function(input) {
+        if (input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.getElementById('img-preview');
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    window.openLightbox = function(url) {
+        document.getElementById('lightbox-img').src = url;
+        document.getElementById('lightbox').classList.add('open');
+    };
+    window.closeLightbox = function() {
+        document.getElementById('lightbox').classList.remove('open');
+    };
+    async function seedIfEmpty() {
+        const snap = await getDocs(collection(db, "reviews"));
+        if (snap.empty) {
+            await addDoc(collection(db, "reviews"), {
+                name: "hyeraa",
+                role: "Client — JJ Edit Alight Motion",
+                service: "Video Edit",
+                rating: 5,
+                review: "Edit videonya keren banget, smooth transition sama color grading-nya dapet banget. Hasilnya 1080p Full HD, puas sama hasilnya!",
+                timestamp: serverTimestamp()
+            });
+        }
+    }
+
+    seedIfEmpty().then(() => loadReviews());
 </script>
 
 <script>
@@ -667,12 +1012,24 @@
     function showCatalog() {
         document.getElementById('home-view').style.display = 'none';
         document.getElementById('catalog-view').style.display = 'block';
+        document.getElementById('testimoni-view').style.display = 'none';
         closeMenu(); window.scrollTo(0,0);
     }
     function showHome() {
         document.getElementById('home-view').style.display = 'block';
         document.getElementById('catalog-view').style.display = 'none';
+        document.getElementById('testimoni-view').style.display = 'none';
         closeMenu(); window.scrollTo(0,0);
+    }
+    function showTestimoni() {
+        document.getElementById('home-view').style.display = 'none';
+        document.getElementById('catalog-view').style.display = 'none';
+        document.getElementById('testimoni-view').style.display = 'block';
+        closeMenu(); window.scrollTo(0,0);
+        if (window.loadTestimoniPage) loadTestimoniPage();
+    }
+    function toggleAdmin() {
+        document.getElementById('admin-panel').classList.toggle('open');
     }
     function filterCategory(cat, btn) {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
