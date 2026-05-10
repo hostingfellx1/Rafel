@@ -225,7 +225,73 @@
         .contact-item i{color:var(--primary-red);margin-top:3px;flex-shrink:0;}
         .contact-note{font-size:0.78rem;color:var(--text-gray);margin-top:12px;border-top:1px solid #333;padding-top:12px;}
 
-        /* SCROLL TOP */
+        /* ===================== ADMIN MODAL ===================== */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.9); z-index: 10000;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: var(--card-bg); border: 1px solid var(--dark-red);
+            border-radius: 16px; width: 100%; max-width: 520px;
+            max-height: 90vh; overflow-y: auto;
+            animation: fadeInUp 0.3s ease;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 24px; border-bottom: 1px solid #222;
+            position: sticky; top: 0; background: var(--card-bg); z-index: 1;
+        }
+        .modal-header h3 { font-family: 'Syne', sans-serif; color: var(--primary-red); font-size: 1.1rem; }
+        .modal-close { background: none; border: none; color: var(--text-gray); font-size: 1.3rem; cursor: pointer; padding: 4px; transition: 0.2s; }
+        .modal-close:hover { color: white; }
+        .modal-body { padding: 24px; }
+
+        /* Tab admin */
+        .admin-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .admin-tab {
+            padding: 8px 16px; border-radius: 6px; border: 1px solid #333;
+            background: #1a1a1a; color: var(--text-gray); cursor: pointer;
+            font-family: 'DM Sans', sans-serif; font-size: 0.85rem; transition: 0.2s;
+        }
+        .admin-tab.active { background: var(--primary-red); border-color: var(--primary-red); color: white; }
+        .admin-tab-content { display: none; }
+        .admin-tab-content.active { display: block; }
+
+        /* PIN screen */
+        .pin-screen { text-align: center; padding: 10px 0 20px; }
+        .pin-screen p { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 16px; }
+        .pin-screen .lock-icon { font-size: 2.5rem; color: var(--primary-red); margin-bottom: 12px; display: block; }
+        .pin-form { display: flex; gap: 10px; }
+        .pin-form input { flex: 1; }
+
+        /* Katalog admin item */
+        .admin-catalog-item {
+            background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px;
+            padding: 14px; margin-bottom: 10px; display: flex;
+            align-items: center; gap: 12px;
+        }
+        .admin-catalog-item img { width: 60px; height: 45px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+        .admin-catalog-item-info { flex: 1; min-width: 0; }
+        .admin-catalog-item-info strong { display: block; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .admin-catalog-item-info span { font-size: 0.78rem; color: var(--text-gray); }
+        .admin-catalog-actions { display: flex; gap: 6px; }
+        .btn-edit { padding: 5px 10px; background: #1a1a2a; border: 1px solid #3a3a5a; color: #7a7aff; border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
+        .btn-edit:hover { background: #2a2a4a; }
+        .btn-del { padding: 5px 10px; background: #2a1a1a; border: 1px solid #5a2a2a; color: #ff6666; border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
+        .btn-del:hover { background: #3a1a1a; }
+
+        /* Porto admin item */
+        .admin-porto-item {
+            background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px;
+            overflow: hidden; margin-bottom: 10px;
+        }
+        .admin-porto-item img { width: 100%; height: 120px; object-fit: cover; display: block; }
+        .admin-porto-item-body { padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-porto-item-body span { font-size: 0.85rem; font-weight: 600; }
+
+        @media(max-width: 520px) { .modal-box { border-radius: 12px; } .admin-tabs { gap: 6px; } .admin-tab { padding: 7px 12px; font-size: 0.8rem; } }
         #scrollTop{position:fixed;bottom:24px;right:24px;width:42px;height:42px;background:var(--primary-red);color:white;border:none;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:1rem;z-index:999;transition:0.3s;box-shadow:0 4px 15px rgba(255,0,0,0.4);}
         #scrollTop:hover{background:var(--dark-red);transform:translateY(-3px);}
 
@@ -361,7 +427,7 @@
 
 <!-- NAV -->
 <nav>
-    <div class="logo" onclick="showHome()">RAFEL STUDIO</div>
+    <div class="logo" id="logo-btn" ondblclick="openAdminModal()" onclick="showHome()" title="Double tap untuk admin">RAFEL STUDIO</div>
     <div class="nav-links">
         <a href="javascript:void(0)" onclick="showCatalog()"><i class="fas fa-th-large"></i> Katalog</a>
         <a href="javascript:void(0)" onclick="showTestimoni()"><i class="fas fa-star"></i> Testimoni</a>
@@ -554,70 +620,22 @@
         <a href="javascript:void(0)" onclick="showHome()" style="color:var(--text-gray);text-decoration:none;font-weight:700;font-size:0.85rem;white-space:nowrap;"><i class="fas fa-arrow-left"></i> KEMBALI</a>
     </div>
 
-    <!-- Rating Summary -->
-    <div class="rating-summary" id="ts-rating-summary" style="display:none;margin-bottom:24px;">
+    <!-- List Testimoni dulu di atas -->
+    <div id="ts-reviews-container">
+        <div class="loading-reviews">
+            <div class="spinner"></div>
+            <p>Memuat testimoni...</p>
+        </div>
+    </div>
+
+    <!-- Rating Summary di bawah -->
+    <div class="rating-summary" id="ts-rating-summary" style="display:none;margin-top:30px;">
         <div class="rating-big">
             <div class="num" id="ts-avg-score">0</div>
             <div class="stars" id="ts-avg-stars">☆☆☆☆☆</div>
             <div class="total" id="ts-total-reviews">0 ulasan</div>
         </div>
         <div class="rating-bars" id="ts-bar-chart"></div>
-    </div>
-
-    <!-- Admin Toggle -->
-    <button class="admin-toggle" onclick="toggleAdmin()">
-        <i class="fas fa-lock"></i> Mode Admin — Tambah Bukti Transaksi
-    </button>
-
-    <!-- Admin Panel -->
-    <div class="admin-panel" id="admin-panel">
-        <h3><i class="fas fa-shield-alt"></i> Panel Admin</h3>
-        <p>Upload bukti transaksi + ulasan klien. Hanya lo yang bisa akses ini.</p>
-
-        <div class="pin-row">
-            <input type="password" class="form-input" id="admin-pin" placeholder="Masukkan PIN admin">
-            <span class="pin-hint">Default: 1234</span>
-        </div>
-
-        <div class="admin-form-grid">
-            <input type="text" class="form-input" id="admin-name" placeholder="Nama customer *">
-            <input type="text" class="form-input" id="admin-role" placeholder="Pekerjaan / deskripsi">
-        </div>
-        <div class="admin-form-grid">
-            <select class="service-select" id="admin-service" style="margin-bottom:0;">
-                <option value="">Jasa yang dipesan *</option>
-                <option value="Landing Page">Landing Page</option>
-                <option value="Logo Design">Logo Design</option>
-                <option value="Video Edit">Video Edit</option>
-                <option value="E-Commerce">Website E-Commerce</option>
-            </select>
-            <input type="text" class="form-input" id="admin-total" placeholder="Total bayar (cth: Rp 20.000)">
-        </div>
-
-        <div class="admin-form-grid" style="margin-top:10px;">
-            <input type="text" class="form-input" id="admin-metode" placeholder="Metode bayar (DANA/OVO/dll)">
-            <input type="text" class="form-input" id="admin-tanggal" placeholder="Tanggal (cth: 8 Mei 2026)">
-        </div>
-
-        <textarea class="form-input" id="admin-review" placeholder="Ulasan / komentar klien (opsional)" style="margin-top:10px;min-height:70px;"></textarea>
-
-        <label class="img-upload-label" for="bukti-upload" style="margin-top:10px;">
-            <i class="fas fa-image"></i> Klik untuk upload foto bukti transaksi
-        </label>
-        <input type="file" id="bukti-upload" accept="image/*" style="display:none;" onchange="previewBukti(this)">
-        <img id="img-preview" src="" alt="Preview">
-
-        <button class="submit-btn" id="admin-submit-btn" onclick="submitAdmin()">
-            <i class="fas fa-upload"></i> Upload Testimoni
-        </button>
-    </div>
-
-    <!-- List Testimoni -->
-    <div id="ts-reviews-container">
-        <div class="loading-reviews">
-            <div class="spinner"></div>
-            <p>Memuat testimoni...</p>
-        </div>
     </div>
 </div>
 
@@ -671,6 +689,106 @@
                 <h3 class="product-title">Website E-Commerce</h3>
                 <p class="price">Rp 150.000</p>
                 <a href="https://wa.me/6283169495614?text=Halo%20Rafel,%20mau%20order%20Toko%20Online" class="buy-btn"><i class="fab fa-whatsapp"></i> Pilih Jasa</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="modal-overlay" id="admin-modal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fas fa-shield-alt"></i> Panel Admin</h3>
+            <button class="modal-close" onclick="closeAdminModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+
+            <!-- PIN Screen -->
+            <div id="pin-screen">
+                <div class="pin-screen">
+                    <i class="fas fa-lock lock-icon"></i>
+                    <p>Masukkan PIN untuk masuk ke panel admin</p>
+                    <div class="pin-form">
+                        <input type="password" class="form-input" id="modal-pin" placeholder="PIN Admin" onkeyup="if(event.key==='Enter')verifyPin()">
+                        <button class="submit-btn" style="width:auto;padding:11px 20px;" onclick="verifyPin()">Masuk</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Content (hidden until PIN verified) -->
+            <div id="admin-content" style="display:none;">
+                <div class="admin-tabs">
+                    <button class="admin-tab active" onclick="switchTab('tab-testimoni',this)"><i class="fas fa-star"></i> Testimoni</button>
+                    <button class="admin-tab" onclick="switchTab('tab-katalog',this)"><i class="fas fa-th-large"></i> Katalog</button>
+                    <button class="admin-tab" onclick="switchTab('tab-porto',this)"><i class="fas fa-images"></i> Portofolio</button>
+                </div>
+
+                <!-- TAB TESTIMONI -->
+                <div class="admin-tab-content active" id="tab-testimoni">
+                    <p style="color:var(--text-gray);font-size:0.82rem;margin-bottom:16px;">Upload bukti transaksi + ulasan klien.</p>
+                    <div class="admin-form-grid">
+                        <input type="text" class="form-input" id="admin-name" placeholder="Nama customer *">
+                        <input type="text" class="form-input" id="admin-role" placeholder="Pekerjaan / deskripsi">
+                    </div>
+                    <div class="admin-form-grid" style="margin-top:10px;">
+                        <select class="service-select" id="admin-service" style="margin-bottom:0;">
+                            <option value="">Jasa yang dipesan *</option>
+                            <option value="Landing Page">Landing Page</option>
+                            <option value="Logo Design">Logo Design</option>
+                            <option value="Video Edit">Video Edit</option>
+                            <option value="E-Commerce">Website E-Commerce</option>
+                        </select>
+                        <input type="text" class="form-input" id="admin-total" placeholder="Total bayar (Rp 20.000)">
+                    </div>
+                    <div class="admin-form-grid" style="margin-top:10px;">
+                        <input type="text" class="form-input" id="admin-metode" placeholder="Metode (DANA/OVO/dll)">
+                        <input type="text" class="form-input" id="admin-tanggal" placeholder="Tanggal (8 Mei 2026)">
+                    </div>
+                    <textarea class="form-input" id="admin-review" placeholder="Ulasan klien (opsional)" style="margin-top:10px;min-height:70px;"></textarea>
+                    <label class="img-upload-label" for="bukti-upload" style="margin-top:10px;">
+                        <i class="fas fa-image"></i> Upload foto bukti transaksi
+                    </label>
+                    <input type="file" id="bukti-upload" accept="image/*" style="display:none;" onchange="previewBukti(this)">
+                    <img id="img-preview" src="" alt="Preview" style="display:none;width:100%;border-radius:6px;margin-bottom:10px;max-height:180px;object-fit:cover;">
+                    <button class="submit-btn" id="admin-submit-btn" onclick="submitAdmin()">
+                        <i class="fas fa-upload"></i> Upload Testimoni
+                    </button>
+                </div>
+
+                <!-- TAB KATALOG -->
+                <div class="admin-tab-content" id="tab-katalog">
+                    <p style="color:var(--text-gray);font-size:0.82rem;margin-bottom:16px;">Tambah atau hapus item katalog.</p>
+                    <div id="admin-catalog-list"></div>
+                    <hr style="border-color:#222;margin:16px 0;">
+                    <p style="font-weight:600;margin-bottom:12px;font-size:0.9rem;">+ Tambah Katalog Baru</p>
+                    <input type="text" class="form-input" id="kat-title" placeholder="Nama jasa *" style="margin-bottom:10px;">
+                    <div class="admin-form-grid">
+                        <input type="text" class="form-input" id="kat-price" placeholder="Harga (Rp 50.000)">
+                        <select class="service-select" id="kat-cat" style="margin-bottom:0;">
+                            <option value="development">Website</option>
+                            <option value="graphic">Desain</option>
+                            <option value="editor">Editing</option>
+                        </select>
+                    </div>
+                    <input type="text" class="form-input" id="kat-img" placeholder="URL foto (dari imgbb/unsplash)" style="margin-top:10px;margin-bottom:10px;">
+                    <input type="text" class="form-input" id="kat-wa" placeholder="Teks WA order (opsional)" style="margin-bottom:10px;">
+                    <button class="submit-btn" onclick="addKatalog()"><i class="fas fa-plus"></i> Tambah ke Katalog</button>
+                </div>
+
+                <!-- TAB PORTOFOLIO -->
+                <div class="admin-tab-content" id="tab-porto">
+                    <p style="color:var(--text-gray);font-size:0.82rem;margin-bottom:16px;">Edit atau tambah item portofolio.</p>
+                    <div id="admin-porto-list"></div>
+                    <hr style="border-color:#222;margin:16px 0;">
+                    <p style="font-weight:600;margin-bottom:12px;font-size:0.9rem;">+ Tambah Portofolio Baru</p>
+                    <input type="text" class="form-input" id="porto-title" placeholder="Judul proyek *" style="margin-bottom:10px;">
+                    <div class="admin-form-grid">
+                        <input type="text" class="form-input" id="porto-label" placeholder="Kategori (Web Dev, dll)">
+                        <input type="text" class="form-input" id="porto-link" placeholder="Link detail (opsional)">
+                    </div>
+                    <input type="text" class="form-input" id="porto-img" placeholder="URL foto portofolio *" style="margin-top:10px;margin-bottom:10px;">
+                    <button class="submit-btn" onclick="addPorto()"><i class="fas fa-plus"></i> Tambah Portofolio</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1009,28 +1127,199 @@
         const ham = document.getElementById('hamburger'), menu = document.getElementById('mobileMenu');
         if (!ham.contains(e.target) && !menu.contains(e.target)) closeMenu();
     });
-    function showCatalog() {
-        document.getElementById('home-view').style.display = 'none';
-        document.getElementById('catalog-view').style.display = 'block';
-        document.getElementById('testimoni-view').style.display = 'none';
+
+    function showView(id) {
+        ['home-view','catalog-view','testimoni-view'].forEach(v => {
+            document.getElementById(v).style.display = v === id ? 'block' : 'none';
+        });
         closeMenu(); window.scrollTo(0,0);
     }
-    function showHome() {
-        document.getElementById('home-view').style.display = 'block';
-        document.getElementById('catalog-view').style.display = 'none';
-        document.getElementById('testimoni-view').style.display = 'none';
-        closeMenu(); window.scrollTo(0,0);
-    }
+    function showCatalog() { showView('catalog-view'); }
+    function showHome() { showView('home-view'); }
     function showTestimoni() {
-        document.getElementById('home-view').style.display = 'none';
-        document.getElementById('catalog-view').style.display = 'none';
-        document.getElementById('testimoni-view').style.display = 'block';
-        closeMenu(); window.scrollTo(0,0);
+        showView('testimoni-view');
         if (window.loadTestimoniPage) loadTestimoniPage();
     }
-    function toggleAdmin() {
-        document.getElementById('admin-panel').classList.toggle('open');
+
+    // ---- Double Tap Admin ----
+    let lastTap = 0;
+    document.getElementById('logo-btn').addEventListener('touchend', function(e) {
+        const now = Date.now();
+        if (now - lastTap < 350) { e.preventDefault(); openAdminModal(); }
+        lastTap = now;
+    });
+
+    function openAdminModal() {
+        document.getElementById('admin-modal').classList.add('open');
+        document.getElementById('pin-screen').style.display = 'block';
+        document.getElementById('admin-content').style.display = 'none';
+        document.getElementById('modal-pin').value = '';
+        setTimeout(() => document.getElementById('modal-pin').focus(), 100);
     }
+    function closeAdminModal() {
+        document.getElementById('admin-modal').classList.remove('open');
+    }
+    document.getElementById('admin-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeAdminModal();
+    });
+
+    function verifyPin() {
+        const pin = document.getElementById('modal-pin').value;
+        if (pin === '200813') {
+            document.getElementById('pin-screen').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'block';
+            loadAdminCatalog();
+            loadAdminPorto();
+        } else {
+            document.getElementById('modal-pin').style.borderColor = 'var(--primary-red)';
+            document.getElementById('modal-pin').value = '';
+            document.getElementById('modal-pin').placeholder = 'PIN salah, coba lagi!';
+            setTimeout(() => {
+                document.getElementById('modal-pin').style.borderColor = '#333';
+                document.getElementById('modal-pin').placeholder = 'PIN Admin';
+            }, 1500);
+        }
+    }
+
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    // ---- Katalog Dinamis ----
+    let catalogItems = JSON.parse(localStorage.getItem('rafel_catalog') || 'null') || [
+        { id:'c1', title:'Website Landing Page', price:'Rp 50.000', cat:'development', img:'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=500', wa:'Halo%20Rafel,%20mau%20order%20Landing%20Page', badge:'hot' },
+        { id:'c2', title:'Logo Art Design', price:'Rp 20.000', cat:'graphic', img:'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=500', wa:'Halo%20Rafel,%20mau%20order%20Desain%20Logo', badge:'new' },
+        { id:'c3', title:'Cinematic Video Edit', price:'Rp 50.000', cat:'editor', img:'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=500', wa:'Halo%20Rafel,%20mau%20order%20Edit%20Video', badge:'' },
+        { id:'c4', title:'Website E-Commerce', price:'Rp 150.000', cat:'development', img:'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=500', wa:'Halo%20Rafel,%20mau%20order%20Toko%20Online', badge:'' }
+    ];
+
+    let portoItems = JSON.parse(localStorage.getItem('rafel_porto') || 'null') || [
+        { id:'p1', title:'Landing Page Toko Kopi', label:'Web Development', img:'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=600', link:'https://pratamamoriski-cyber.github.io/Fell/' },
+        { id:'p2', title:'Branding Logo Startup', label:'Graphic Design', img:'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=600', link:'https://pratamamoriski-cyber.github.io/Fell/' },
+        { id:'p3', title:'JJ Edit — Smooth Transition', label:'Video Editor', img:'https://i.ibb.co/G3dY3Y6N/Screenshot-20260508-183822.png', link:'https://pratamamoriski-cyber.github.io/Fell/' }
+    ];
+
+    function saveCatalog() { localStorage.setItem('rafel_catalog', JSON.stringify(catalogItems)); }
+    function savePorto() { localStorage.setItem('rafel_porto', JSON.stringify(portoItems)); }
+
+    function renderCatalog() {
+        const grid = document.getElementById('full-catalog');
+        grid.innerHTML = catalogItems.map(i => `
+            <div class="product-card item" data-cat="${i.cat}">
+                <div class="product-img-wrap"><img src="${i.img}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=500'"></div>
+                <div class="product-info">
+                    <span class="product-category">${i.cat === 'development' ? 'Web Development' : i.cat === 'graphic' ? 'Graphic Design' : 'Video Editor'}</span>
+                    <h3 class="product-title">${i.title} ${i.badge === 'hot' ? '<span class="badge badge-hot">🔥 Terlaris</span>' : i.badge === 'new' ? '<span class="badge badge-new">✨ Baru</span>' : ''}</h3>
+                    <p class="price">${i.price}</p>
+                    <a href="https://wa.me/6283169495614?text=${i.wa}" class="buy-btn"><i class="fab fa-whatsapp"></i> Pilih Jasa</a>
+                </div>
+            </div>`).join('');
+
+        // Juga update home grid (2 item pertama)
+        const homeGrid = document.querySelector('#home-view .grid');
+        if (homeGrid) {
+            homeGrid.innerHTML = catalogItems.slice(0,2).map(i => `
+                <div class="product-card">
+                    <div class="product-img-wrap"><img src="${i.img}" class="product-img"></div>
+                    <div class="product-info">
+                        <span class="product-category">${i.cat === 'development' ? 'Web Development' : i.cat === 'graphic' ? 'Graphic Design' : 'Video Editor'}</span>
+                        <h3 class="product-title">${i.title} ${i.badge === 'hot' ? '<span class="badge badge-hot">🔥 Terlaris</span>' : i.badge === 'new' ? '<span class="badge badge-new">✨ Baru</span>' : ''}</h3>
+                        <p class="price">${i.price}</p>
+                        <a href="https://wa.me/6283169495614?text=${i.wa}" class="buy-btn"><i class="fab fa-whatsapp"></i> Order Sekarang</a>
+                    </div>
+                </div>`).join('');
+        }
+    }
+
+    function renderPorto() {
+        const grid = document.querySelector('.porto-grid');
+        if (!grid) return;
+        grid.innerHTML = portoItems.map(p => `
+            <div class="porto-card">
+                <img src="${p.img}" alt="${p.title}" onerror="this.src='https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=600'">
+                <div class="porto-overlay">
+                    <span class="porto-label">${p.label}</span>
+                    <span class="porto-title">${p.title}</span>
+                    <a href="${p.link||'#'}" target="_blank" class="porto-cta">Lihat Detail →</a>
+                </div>
+            </div>`).join('');
+    }
+
+    function loadAdminCatalog() {
+        const list = document.getElementById('admin-catalog-list');
+        list.innerHTML = catalogItems.map(i => `
+            <div class="admin-catalog-item">
+                <img src="${i.img}" onerror="this.src='https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=100'">
+                <div class="admin-catalog-item-info">
+                    <strong>${i.title}</strong>
+                    <span>${i.price}</span>
+                </div>
+                <div class="admin-catalog-actions">
+                    <button class="btn-del" onclick="deleteKatalog('${i.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`).join('') || '<p style="color:var(--text-gray);font-size:0.85rem;">Belum ada katalog.</p>';
+    }
+
+    function loadAdminPorto() {
+        const list = document.getElementById('admin-porto-list');
+        list.innerHTML = portoItems.map(p => `
+            <div class="admin-porto-item">
+                <img src="${p.img}" onerror="this.src='https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=400'">
+                <div class="admin-porto-item-body">
+                    <span>${p.title}</span>
+                    <button class="btn-del" onclick="deletePorto('${p.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`).join('') || '<p style="color:var(--text-gray);font-size:0.85rem;">Belum ada portofolio.</p>';
+    }
+
+    function addKatalog() {
+        const title = document.getElementById('kat-title').value.trim();
+        const price = document.getElementById('kat-price').value.trim();
+        const cat = document.getElementById('kat-cat').value;
+        const img = document.getElementById('kat-img').value.trim();
+        const wa = document.getElementById('kat-wa').value.trim() || `Halo%20Rafel,%20mau%20order%20${encodeURIComponent(title)}`;
+        if (!title) return alert('Nama jasa wajib diisi!');
+        catalogItems.push({ id: 'c'+Date.now(), title, price: price||'Hubungi Kami', cat, img: img||'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=500', wa, badge:'' });
+        saveCatalog(); renderCatalog(); loadAdminCatalog();
+        ['kat-title','kat-price','kat-img','kat-wa'].forEach(id => document.getElementById(id).value='');
+        showToastAdmin('✅ Katalog berhasil ditambahkan!');
+    }
+
+    function deleteKatalog(id) {
+        if (!confirm('Hapus item ini?')) return;
+        catalogItems = catalogItems.filter(i => i.id !== id);
+        saveCatalog(); renderCatalog(); loadAdminCatalog();
+        showToastAdmin('🗑️ Katalog dihapus.');
+    }
+
+    function addPorto() {
+        const title = document.getElementById('porto-title').value.trim();
+        const label = document.getElementById('porto-label').value.trim();
+        const link = document.getElementById('porto-link').value.trim();
+        const img = document.getElementById('porto-img').value.trim();
+        if (!title || !img) return alert('Judul dan URL foto wajib diisi!');
+        portoItems.push({ id: 'p'+Date.now(), title, label: label||'Portofolio', img, link: link||'#' });
+        savePorto(); renderPorto(); loadAdminPorto();
+        ['porto-title','porto-label','porto-link','porto-img'].forEach(id => document.getElementById(id).value='');
+        showToastAdmin('✅ Portofolio berhasil ditambahkan!');
+    }
+
+    function deletePorto(id) {
+        if (!confirm('Hapus portofolio ini?')) return;
+        portoItems = portoItems.filter(p => p.id !== id);
+        savePorto(); renderPorto(); loadAdminPorto();
+        showToastAdmin('🗑️ Portofolio dihapus.');
+    }
+
+    function showToastAdmin(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg; t.className = 'toast'; t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
     function filterCategory(cat, btn) {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -1049,6 +1338,10 @@
     window.addEventListener('scroll', () => {
         document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 300);
     });
+
+    // Init render
+    renderCatalog();
+    renderPorto();
 </script>
 </body>
 </html>
