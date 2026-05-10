@@ -712,6 +712,20 @@
                         <input type="password" class="form-input" id="modal-pin" placeholder="PIN Admin" onkeyup="if(event.key==='Enter')verifyPin()">
                         <button class="submit-btn" style="width:auto;padding:11px 20px;" onclick="verifyPin()">Masuk</button>
                     </div>
+                    <p id="pin-error" style="display:none;color:#ff4444;font-size:0.8rem;margin-top:10px;text-align:center;"></p>
+                </div>
+            </div>
+
+            <!-- Secret Screen (step 2) -->
+            <div id="secret-screen" style="display:none;">
+                <div class="pin-screen">
+                    <i class="fas fa-user-shield lock-icon"></i>
+                    <p>Masukkan nama verifikasi kamu</p>
+                    <div class="pin-form">
+                        <input type="password" class="form-input" id="modal-secret" placeholder="Nama verifikasi" onkeyup="if(event.key==='Enter')verifySecret()">
+                        <button class="submit-btn" style="width:auto;padding:11px 20px;" onclick="verifySecret()">Verifikasi</button>
+                    </div>
+                    <p id="secret-error" style="display:none;color:#ff4444;font-size:0.8rem;margin-top:10px;text-align:center;"></p>
                 </div>
             </div>
 
@@ -1017,9 +1031,6 @@
 
     // Admin submit
     window.submitAdmin = async function() {
-        const pin = document.getElementById('admin-pin').value;
-        if (pin !== '200813') return showToast('PIN salah!', true);
-
         const name = document.getElementById('admin-name').value.trim();
         const role = document.getElementById('admin-role').value.trim();
         const service = document.getElementById('admin-service').value;
@@ -1150,10 +1161,21 @@
     });
 
     function openAdminModal() {
+        if (isLocked()) {
+            const rem = getLockRemaining();
+            const menit = Math.floor(rem / 60), detik = rem % 60;
+            const t = document.getElementById('toast');
+            t.innerText = `🔒 Admin terkunci ${menit}m ${detik}s lagi`;
+            t.className = 'toast error'; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3500);
+            return;
+        }
         document.getElementById('admin-modal').classList.add('open');
         document.getElementById('pin-screen').style.display = 'block';
+        document.getElementById('secret-screen').style.display = 'none';
         document.getElementById('admin-content').style.display = 'none';
         document.getElementById('modal-pin').value = '';
+        document.getElementById('modal-secret').value = '';
         setTimeout(() => document.getElementById('modal-pin').focus(), 100);
     }
     function closeAdminModal() {
@@ -1163,22 +1185,114 @@
         if (e.target === this) closeAdminModal();
     });
 
-    function verifyPin() {
+    // ---- Security System ----
+    const PIN_HASH = '87c4b645682f74386d8f2f1f556474a5ef214302d4af5e76777b4ce6dcf00b2c';
+    const SECRET_HASH = 'd40c9b3f2d12259ce9c9b672ecafa813a80790d8a413de36d395579394d4dc5d';
+    const MAX_ATTEMPTS = 3;
+    const LOCK_DURATION = 10 * 60 * 1000; // 10 menit
+
+    async function sha256(str) {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    function isLocked() {
+        const lockUntil = parseInt(localStorage.getItem('admin_lock_until') || '0');
+        return Date.now() < lockUntil;
+    }
+
+    function getLockRemaining() {
+        const lockUntil = parseInt(localStorage.getItem('admin_lock_until') || '0');
+        return Math.ceil((lockUntil - Date.now()) / 1000);
+    }
+
+    function getAttempts() {
+        return parseInt(localStorage.getItem('admin_attempts') || '0');
+    }
+
+    function incrementAttempts() {
+        const attempts = getAttempts() + 1;
+        localStorage.setItem('admin_attempts', attempts);
+        if (attempts >= MAX_ATTEMPTS) {
+            localStorage.setItem('admin_lock_until', Date.now() + LOCK_DURATION);
+            localStorage.setItem('admin_attempts', '0');
+        }
+        return attempts;
+    }
+
+    function resetAttempts() {
+        localStorage.removeItem('admin_attempts');
+        localStorage.removeItem('admin_lock_until');
+    }
+
+    // Step 1: verifikasi PIN
+    async function verifyPin() {
+        if (isLocked()) {
+            const rem = getLockRemaining();
+            const menit = Math.floor(rem / 60), detik = rem % 60;
+            showPinError(`🔒 Terkunci! Coba lagi ${menit}m ${detik}s`);
+            return;
+        }
+
         const pin = document.getElementById('modal-pin').value;
-        if (pin === '200813') {
+        if (!pin) return;
+
+        const hash = await sha256(pin);
+        if (hash === PIN_HASH) {
+            resetAttempts();
+            // Lanjut ke step 2 — verifikasi nama
             document.getElementById('pin-screen').style.display = 'none';
+            document.getElementById('secret-screen').style.display = 'block';
+            setTimeout(() => document.getElementById('modal-secret').focus(), 100);
+        } else {
+            const attempts = incrementAttempts();
+            const sisa = MAX_ATTEMPTS - attempts;
+            if (isLocked()) {
+                showPinError(`🔒 Terkunci 10 menit karena terlalu banyak percobaan!`);
+            } else {
+                showPinError(`PIN salah! Sisa percobaan: ${sisa}`);
+            }
+            document.getElementById('modal-pin').value = '';
+        }
+    }
+
+    // Step 2: verifikasi nama rahasia
+    async function verifySecret() {
+        const secret = document.getElementById('modal-secret').value;
+        if (!secret) return;
+
+        const hash = await sha256(secret);
+        if (hash === SECRET_HASH) {
+            document.getElementById('secret-screen').style.display = 'none';
             document.getElementById('admin-content').style.display = 'block';
             loadAdminCatalog();
             loadAdminPorto();
         } else {
-            document.getElementById('modal-pin').style.borderColor = 'var(--primary-red)';
-            document.getElementById('modal-pin').value = '';
-            document.getElementById('modal-pin').placeholder = 'PIN salah, coba lagi!';
-            setTimeout(() => {
-                document.getElementById('modal-pin').style.borderColor = '#333';
-                document.getElementById('modal-pin').placeholder = 'PIN Admin';
-            }, 1500);
+            const attempts = incrementAttempts();
+            const sisa = MAX_ATTEMPTS - attempts;
+            if (isLocked()) {
+                showSecretError(`🔒 Terkunci 10 menit!`);
+                document.getElementById('secret-screen').style.display = 'none';
+                document.getElementById('pin-screen').style.display = 'block';
+            } else {
+                showSecretError(`Nama verifikasi salah! Sisa: ${sisa}`);
+            }
+            document.getElementById('modal-secret').value = '';
         }
+    }
+
+    function showPinError(msg) {
+        const el = document.getElementById('pin-error');
+        el.innerText = msg; el.style.display = 'block';
+        document.getElementById('modal-pin').style.borderColor = 'var(--primary-red)';
+        setTimeout(() => { el.style.display = 'none'; document.getElementById('modal-pin').style.borderColor = '#333'; }, 3000);
+    }
+
+    function showSecretError(msg) {
+        const el = document.getElementById('secret-error');
+        el.innerText = msg; el.style.display = 'block';
+        document.getElementById('modal-secret').style.borderColor = 'var(--primary-red)';
+        setTimeout(() => { el.style.display = 'none'; document.getElementById('modal-secret').style.borderColor = '#333'; }, 3000);
     }
 
     function switchTab(tabId, btn) {
